@@ -1,0 +1,16 @@
+---
+- name: Test Snort role(s)
+  hosts: snort
+  remote_user: root
+  vars:
+    - snort_interface: eth1
+    - snort_config_ssh_ports: "[22,8022]"
+
+  tasks:
+    - name: Include snort-install role
+      include_role:
+        name: snort-install
+    - name: Include snort-config role
+      include_role:
+        name: snort-config
+

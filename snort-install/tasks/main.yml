@@ -1,0 +1,28 @@
+---
+# tasks file for ansible-role-snort
+
+- name: install snort and dependent packages
+  yum:
+    name:
+      - "https://www.snort.org/downloads/snort/daq-2.0.6-1.centos7.x86_64.rpm"
+      - "https://www.snort.org/downloads/snort/snort-2.9.11.1-1.centos7.x86_64.rpm"
+      - "libdnet"
+    state: installed
+
+# This is to work around a packaing problem with upstream snort's rpm install
+- name: symlink libdnet.1 to libdnet.so.1
+  file:
+    src: /usr/lib64/libdnet.so.1
+    dest: /usr/lib64/libdnet.1
+    state: link
+
+- name: install systemd service unit file
+  copy:
+    src: snort.service
+    dest: /etc/systemd/system/snort.service
+
+- name: lay down sysconfig file
+  template:
+    src: etc_sysconfig_snort.j2
+    dest: /etc/sysconfig/snort
+
