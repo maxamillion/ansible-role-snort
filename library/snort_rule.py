@@ -51,8 +51,9 @@ EXAMPLES = '''
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.firewalld import FirewallTransaction, fw_offline
+from ansible.module_utils._text import to_text
 
+from idstools import rule
 
 def main():
 
@@ -60,10 +61,61 @@ def main():
         argument_spec=dict(
             rule=dict(required=True, default=None),
             state=dict(choices=['present', 'absent'], required=True),
-            rules_file=dict(required=False, default='/etc/snort/rules/ansible_managed.rules),
+            rules_file=dict(required=False, default='/etc/snort/rules/ansible_managed.rules'),
         ),
         supports_check_mode=True
     )
+
+    matched_rules = [
+        snort_rule for snort_rule in rule.parse_file(module.params['rules_file'])
+        if snort_rule == to_text(rule.parse(module.params['rule']))
+    ]
+    rule_found = True if matched_rules else False
+
+    if module.params['state'] == 'present' and rule_found:
+        module.exit_json(
+            msg="Rule '{}' already present in rules_file {}".format(module.params['rule'], module.params['rules_file']),
+            changed=False
+        )
+    elif module.params['state'] == 'present' and not rule_found:
+        if module.check_mode:
+            module.exit_json(
+                msg="Rule '{}' would be added to rules_file {}".format(module.params['rule'], module.params['rules_file']),
+                changed=True
+            )
+
+        with open(module.params['rules_file'], 'a') as rules_file:
+            rules_file.write(to_text(rule.parse(module.params['rule'])))
+
+        module.exit_json(
+            msg="Rule '{}' added to rules_file {}".format(module.params['rule'], module.params['rules_file']),
+            changed=True
+        )
+
+    if module.params['state'] == 'absent' and not rule_found:
+        module.exit_json(
+            msg="Rule '{}' does not exist in rules_file {}".format(module.params['rule'], module.params['rules_file']),
+            changed=False
+        )
+    elif module.params['state'] == 'absent' and rule_found:
+        orig_file_contents = []
+        with open(module.params['rules_file'], 'r') as rules_file:
+            orig_file_contents = rules_file.readlines()
+
+        new_file_contents = [
+            line for line in orig_file_contents
+            if rule.parse(module.params['rule']) != rule.parse(line)
+        ]
+
+        if module.check_mode:
+            if len(orig_file_contents) != len(new_file_contents):
+                module.exit_json(
+                    msg=
+
+
+        with open(module.params['rules_file'], 'w'
+
+
 
 if __name__ == '__main__':
     main()
