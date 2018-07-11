@@ -69,7 +69,7 @@ def main():
 
     matched_rules = [
         snort_rule for snort_rule in rule.parse_file(module.params['rules_file'])
-        if snort_rule == to_text(rule.parse(module.params['rule']))
+        if to_text(snort_rule) == to_text(rule.parse(module.params['rule']))
     ]
     rule_found = True if matched_rules else False
 
