@@ -1,12 +1,15 @@
 ---
 # tasks file for ansible-role-snort
 
+# FIXME - pulledpork needs EPEL, which I already have on my VM templates by
+#         default but it's install/enablement should be handled
 - name: install snort and dependent packages
   yum:
     name:
       - "https://www.snort.org/downloads/snort/daq-{{snort_daq_version}}-1.centos7.x86_64.rpm"
       - "https://www.snort.org/downloads/snort/snort-{{snort_version}}-1.centos7.x86_64.rpm"
       - "libdnet"
+      - "pulledpork"
     state: installed
 
 # This is to work around a packaing problem with upstream snort's rpm install
@@ -15,6 +18,11 @@
     src: /usr/lib64/libdnet.so.1
     dest: /usr/lib64/libdnet.1
     state: link
+
+- name: create dynamic rules dir
+  file:
+    path: /usr/local/lib/snort_dynamicrules
+    state: directory
 
 - name: install systemd service unit file
   copy:
@@ -36,7 +44,7 @@
   unarchive:
     remote_src: True
     src: "/tmp/community-rules.tar.gz"
-    dest: "/etc/snort/rules"
+    dest: "/etc/snort/"
 
 - name: get latest registered rules
   get_url:
@@ -47,4 +55,21 @@
   unarchive:
     remote_src: True
     src: "/tmp/snortrules-snapshot-{{snort_rulesversion}}.tar.gz"
-    dest: "/etc/snort/rules"
+    dest: "/etc/snort/"
+
+# FIXME - this is kind of a hack
+- name: ensure snort required files exist
+  file:
+    path: "{{item}}"
+    state: touch
+  with_items:
+    - /etc/snort/rules/white_list.rules
+    - /etc/snort/rules/black_list.rules
+
+- name: ensure dirs exist as needed for pulledpork
+  file:
+    path: "/etc/snort/rules/iplists/"
+    state: "directory"
+
+- name: run pulledpork
+  shell: "pulledpork -c /etc/pulledpork/pulledpork.conf"
