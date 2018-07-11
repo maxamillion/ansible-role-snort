@@ -1,3 +1,17 @@
 ---
 # defaults file for ansible-role-snort
 snort_interface: eth0
+
+snort_version: 2.9.11.1
+
+snort_daq_version: 2.0.6
+
+# FIXME: This can be found dynamically via a rpm query, but there's little use
+#        since there's no yum repo and we have to install a specific version by
+#        hand anyways.
+#
+#        For good measure, this is the query:
+#
+#           rpm -q snort --queryformat='%{version}' | sed 's/\.//g'
+#
+snort_rulesversion: 29111

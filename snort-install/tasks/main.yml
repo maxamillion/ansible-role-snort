@@ -4,8 +4,8 @@
 - name: install snort and dependent packages
   yum:
     name:
-      - "https://www.snort.org/downloads/snort/daq-2.0.6-1.centos7.x86_64.rpm"
-      - "https://www.snort.org/downloads/snort/snort-2.9.11.1-1.centos7.x86_64.rpm"
+      - "https://www.snort.org/downloads/snort/daq-{{snort_daq_version}}-1.centos7.x86_64.rpm"
+      - "https://www.snort.org/downloads/snort/snort-{{snort_version}}-1.centos7.x86_64.rpm"
       - "libdnet"
     state: installed
 
@@ -26,3 +26,24 @@
     src: etc_sysconfig_snort.j2
     dest: /etc/sysconfig/snort
 
+- name: get latest community rules
+  get_url:
+    url: "https://www.snort.org/downloads/community/community-rules.tar.gz"
+    dest: "/tmp/community-rules.tar.gz"
+
+- name: unpack snort community rules
+  unarchive:
+    remote_src: True
+    src: "/tmp/community-rules.tar.gz"
+    dest: "/etc/snort/rules"
+
+- name: get latest registered rules
+  get_url:
+    url: "https://www.snort.org/rules/snortrules-snapshot-{{snort_rulesversion}}.tar.gz?oinkcode=01f5c80369e5c15d6ac49f9b284d9f4b4ddb7064"
+    dest: "/tmp/snortrules-snapshot-{{snort_rulesversion}}.tar.gz"
+
+- name: unpack snort community rules
+  unarchive:
+    remote_src: True
+    src: "/tmp/snortrules-snapshot-{{snort_rulesversion}}.tar.gz"
+    dest: "/etc/snort/rules"
