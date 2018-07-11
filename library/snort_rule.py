@@ -55,6 +55,7 @@ from ansible.module_utils._text import to_text
 
 from idstools import rule
 
+
 def main():
 
     module = AnsibleModule(
@@ -110,7 +111,10 @@ def main():
         if module.check_mode:
             if len(orig_file_contents) != len(new_file_contents):
                 module.exit_json(
-                    msg="Rule '{}' would have been removed from rules_file {}".format(module.params['rule'], module.params['rules_file']),
+                    msg="Rule '{}' would have been removed from rules_file {}".format(
+                        module.params['rule'],
+                        module.params['rules_file']
+                    ),
                     changed=True
                 )
 
@@ -119,7 +123,10 @@ def main():
                 rules_file.write(line)
 
         module.exit_json(
-            msg="Rule '{}' has been removed from rules_file {}".format(module.params['rule'], module.params['rules_file']),
+            msg="Rule '{}' has been removed from rules_file {}".format(
+                module.params['rule'],
+                module.params['rules_file']
+            ),
             changed=True
         )
 
