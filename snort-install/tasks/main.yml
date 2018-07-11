@@ -25,6 +25,7 @@
   template:
     src: etc_sysconfig_snort.j2
     dest: /etc/sysconfig/snort
+  notify: systemctl daemon-reload
 
 - name: get latest community rules
   get_url:
