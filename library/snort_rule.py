@@ -110,11 +110,18 @@ def main():
         if module.check_mode:
             if len(orig_file_contents) != len(new_file_contents):
                 module.exit_json(
-                    msg=
+                    msg="Rule '{}' would have been removed from rules_file {}".format(module.params['rule'], module.params['rules_file']),
+                    changed=True
+                )
 
+        with open(module.params['rules_file'], 'w') as rules_file:
+            for line in new_file_contents:
+                rules_file.write(line)
 
-        with open(module.params['rules_file'], 'w'
-
+        module.exit_json(
+            msg="Rule '{}' has been removed from rules_file {}".format(module.params['rule'], module.params['rules_file']),
+            changed=True
+        )
 
 
 if __name__ == '__main__':
