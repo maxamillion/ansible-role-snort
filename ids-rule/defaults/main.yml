@@ -1,0 +1,5 @@
+---
+# defaults file for ids-rule
+
+ids_provider_list:
+  - snort
