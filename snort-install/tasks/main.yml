@@ -25,9 +25,9 @@
     state: directory
 
 - name: install systemd service unit file
-  copy:
+  template:
     src: snort.service
-    dest: /etc/systemd/system/snort.service
+    dest: /etc/systemd/system/snort.service.j2
 
 - name: lay down sysconfig file
   template:
