@@ -26,8 +26,8 @@
 
 - name: install systemd service unit file
   template:
-    src: snort.service
-    dest: /etc/systemd/system/snort.service.j2
+    src: snort.service.j2
+    dest: /etc/systemd/system/snort.service
 
 - name: lay down sysconfig file
   template:
