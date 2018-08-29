@@ -1,6 +1,8 @@
 INTERFACE={{snort_interface|default("eth0")}}
 CONF={{snort_config_path|default("/etc/snort/snort.conf")}}
 
+USER=snort
+GROUP=snort
 
 PIDFILEOPTS="--pid-path=/var/run/snort --no-interface-pidfile --nolock-pidfile"
 
