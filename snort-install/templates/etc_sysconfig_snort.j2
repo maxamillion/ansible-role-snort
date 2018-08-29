@@ -1,2 +1,10 @@
 INTERFACE={{snort_interface|default("eth0")}}
 CONF={{snort_config_path|default("/etc/snort/snort.conf")}}
+
+PIDFILEOPTS="--pid-path=/var/run/snort --no-interface-pidfile --nolock-pidfile"
+
+{% if snort_promiscuous_interface|default(false) %}
+OPTIONS="-u snort -g snort -c $CONF -i $INTERFACE -R 1 $PIDFILEOPTS"
+{% else %}
+OPTIONS="-u snort -g snort -c %CONF -i $INTERFACE -dev -p -R 1 $PIDFILEOPTS"
+{% endif %}

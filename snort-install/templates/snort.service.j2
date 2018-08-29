@@ -6,9 +6,11 @@ After=syslog.target network.target
 Type=simple
 EnvironmentFile=/etc/sysconfig/snort
 PIDFile=/var/run/snort/snort1.pid
+{% if snort_promiscuous_interface|default(false) %}
 ExecStartPre=-/usr/sbin/ethtool -K $INTERFACE rx off tx off gro off lro off
 ExecStartPre=-/usr/sbin/ip link set arp off multicast off promisc on dev $INTERFACE
-ExecStart=/usr/sbin/snort -u snort -g snort -c $CONF -i $INTERFACE -R 1 --pid-path=/var/run/snort --no-interface-pidfile --nolock-pidfile
+{% endif %}
+ExecStart=/usr/sbin/snort $OPTIONS
 KillMode=process
 
 [Install]

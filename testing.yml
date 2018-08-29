@@ -5,6 +5,7 @@
   vars:
     - snort_interface: eth1
     - snort_config_ssh_ports: "[22,8022]"
+    - snort_promiscuous_interface: false
 
   tasks:
     - name: Include snort-install role
