@@ -10,7 +10,7 @@ PIDFile=/var/run/snort/snort1.pid
 ExecStartPre=-/usr/sbin/ethtool -K $INTERFACE rx off tx off gro off lro off
 ExecStartPre=-/usr/sbin/ip link set arp off multicast off promisc on dev $INTERFACE
 {% endif %}
-ExecStart=/usr/sbin/snort $OPTIONS
+ExecStart=/usr/sbin/snort -u $USER -g $GROUP -c $CONF -i $INTERFACE $OPTS $PIDFILEOPTS
 KillMode=process
 
 [Install]
