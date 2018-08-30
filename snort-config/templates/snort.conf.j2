@@ -525,7 +525,7 @@ preprocessor reputation: \
 # output log_unified2: filename snort.log, limit 128, nostamp
 
 # syslog
-# output alert_syslog: LOG_AUTH LOG_ALERT
+output alert_syslog: {{ snort_config_alert_syslog|default("LOG_AUTH LOG_ALERT") }}
 
 # pcap
 # output log_tcpdump: tcpdump.log
